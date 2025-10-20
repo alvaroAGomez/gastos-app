@@ -1,0 +1,137 @@
+<ng-container *ngIf="isMobile; else desktopView">
+    <!-- MOBILE LOGIN -->
+    <div class="relative flex flex-col items-center justify-center min-h-screen
+              bg-background dark:bg-background-dark px-6 py-10 transition-colors">
+
+        <!-- Toggle arriba-derecha -->
+        <div class="absolute top-4 right-4">
+            <app-theme-toggle></app-theme-toggle>
+        </div>
+
+        <div class="w-full max-w-sm bg-surface dark:bg-surface-dark text-text dark:text-text-dark
+                rounded-xl shadow-lg p-6 transition-colors">
+            <h1 class="text-2xl font-bold text-center mb-2 text-primary dark:text-primary-dark">
+                Control de Gastos
+            </h1>
+            <p class="text-center text-text-light dark:text-text-dark/70 mb-6 text-sm">
+                Gestioná tus tarjetas y finanzas personales al detalle
+            </p>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4" novalidate>
+                <!-- Email -->
+                <div>
+                    <label class="block text-sm font-medium text-text dark:text-text-dark mb-1">Email</label>
+                    <input type="email" formControlName="email" required class="form-input"
+                        [class.error]="loginForm.get('email')?.invalid && (loginForm.get('email')?.touched || loginForm.get('email')?.dirty)" />
+
+                    <div *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.touched || loginForm.get('email')?.dirty)"
+                        class="form-error">
+                        <ng-container *ngIf="loginForm.get('email')?.errors?.['required']">El email es
+                            obligatorio.</ng-container>
+                        <ng-container *ngIf="loginForm.get('email')?.errors?.['email']">Ingresá un formato de correo
+                            válido.</ng-container>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label class="block text-sm font-medium text-text dark:text-text-dark mb-1">Contraseña</label>
+                    <input type="password" formControlName="password" required class="form-input"
+                        [class.error]="loginForm.get('password')?.invalid && (loginForm.get('password')?.touched || loginForm.get('password')?.dirty)" />
+
+                    <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.touched || loginForm.get('password')?.dirty)"
+                        class="form-error">
+                        La contraseña es obligatoria.
+                    </div>
+                </div>
+
+                <button type="submit" [disabled]="loginForm.invalid" class="w-full bg-primary hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed
+                       text-white font-semibold py-2 rounded-lg transition-colors">
+                    Ingresar
+                </button>
+
+                <div class="text-center text-sm text-text-light dark:text-text-dark/70 mt-4">
+                    ¿No tenés cuenta?
+                    <a routerLink="/auth/registro"
+                        class="text-primary hover:underline dark:text-primary-light">Registrate</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-container>
+
+<!-- DESKTOP LOGIN -->
+<ng-template #desktopView>
+    <div class="min-h-screen flex transition-colors bg-background dark:bg-background-dark">
+        <!-- Columna izquierda  -->
+        <div class="hidden md:flex w-1/2 relative overflow-hidden">
+            <div class="absolute inset-0 flex flex-col justify-center items-center text-center text-white p-12 z-20">
+                <h1 class="text-4xl font-bold mb-4">Control de Gastos</h1>
+                <p class="text-lg text-blue-50 max-w-md">
+                    Mantené un seguimiento detallado de tus tarjetas y mejorá tu gestión financiera.
+                </p>
+            </div>
+
+            <img src="assets/images/login-bg.jpg" alt="Fondo financiero"
+                class="absolute inset-0 w-full h-full object-cover z-0" />
+
+            <div class="absolute inset-0 bg-gradient-to-br from-[#003973cc] to-[#66b3ffb3]
+              dark:from-[#1B2631cc] dark:to-[#003973b3] transition-colors z-10"></div>
+        </div>
+
+
+        <!-- Columna derecha (formulario) -->
+        <div
+            class="relative flex w-full md:w-1/2 justify-center items-center bg-background dark:bg-background-dark p-8">
+            <!-- Toggle arriba-derecha de la columna derecha -->
+            <div class="absolute top-6 right-6">
+                <app-theme-toggle></app-theme-toggle>
+            </div>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="bg-surface dark:bg-surface-dark text-text dark:text-text-dark
+                   shadow-xl rounded-xl p-8 w-full max-w-md space-y-5 transition-colors" novalidate>
+                <h2 class="text-2xl font-bold text-center text-text dark:text-text-dark mb-2">Bienvenido</h2>
+
+                <!-- EMAIL -->
+                <div>
+                    <label class="block text-sm font-medium text-text dark:text-text-dark mb-1">Email</label>
+                    <input type="email" formControlName="email" required class="form-input"
+                        [class.error]="loginForm.get('email')?.invalid && (loginForm.get('email')?.touched || loginForm.get('email')?.dirty)" />
+
+                    <div *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.touched || loginForm.get('email')?.dirty)"
+                        class="form-error">
+                        <ng-container *ngIf="loginForm.get('email')?.errors?.['required']">El email es
+                            obligatorio.</ng-container>
+                        <ng-container *ngIf="loginForm.get('email')?.errors?.['email']">Ingresá un formato de correo
+                            válido.</ng-container>
+                    </div>
+                </div>
+
+                <!-- PASSWORD -->
+                <div>
+                    <label class="block text-sm font-medium text-text dark:text-text-dark mb-1">Contraseña</label>
+                    <input type="password" formControlName="password" required class="form-input"
+                        [class.error]="loginForm.get('password')?.invalid && (loginForm.get('password')?.touched || loginForm.get('password')?.dirty)" />
+
+                    <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.touched || loginForm.get('password')?.dirty)"
+                        class="form-error">
+                        La contraseña es obligatoria.
+                    </div>
+                </div>
+
+                <button type="submit" [disabled]="loginForm.invalid" class="w-full bg-primary hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed
+         text-white font-semibold py-2 rounded-lg transition-colors">
+                    Ingresar
+                </button>
+
+                <div class="text-center text-sm text-text-light dark:text-text-dark/70 mt-4">
+                    ¿No tenés cuenta?
+                    <a routerLink="/auth/registro"
+                        class="text-primary-light hover:text-primary-dark font-semibold hover:underline transition-colors">
+                        Registrate
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

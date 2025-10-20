@@ -12,7 +12,7 @@ export class ThemeToggleComponent {
   darkMode$!: Observable<boolean>;
 
   constructor(private theme: ThemeService) {
-    this.darkMode$ = this.theme.darkMode$; // ✅ ahora se asigna después de la inyección
+    this.darkMode$ = this.theme.darkMode$;
   }
 
   toggleTheme() {

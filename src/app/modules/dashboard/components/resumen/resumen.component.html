@@ -1,0 +1,16 @@
+<div class="bg-surface dark:bg-surface-dark rounded-xl p-5 shadow transition-colors">
+    <h3 class="text-sm text-gray-500 dark:text-gray-400">{{ titulo }}</h3>
+
+    <p class="mt-2 text-2xl font-semibold" [ngClass]="{
+       'text-primary dark:text-primary-light': titulo.toLowerCase().includes('total'),
+       'text-accent dark:text-accent-light': titulo.toLowerCase().includes('gastos'),
+       'text-text dark:text-text-dark': !(titulo.toLowerCase().includes('total') || titulo.toLowerCase().includes('gastos'))
+     }">
+        <ng-container *ngIf="tipo === 'moneda' && esNumero(valor); else textoPlano">
+            {{ valor | currency:'ARS':'symbol':'1.0-0' }}
+        </ng-container>
+        <ng-template #textoPlano>
+            {{ valor }}
+        </ng-template>
+    </p>
+</div>

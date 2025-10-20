@@ -1,0 +1,30 @@
+<div class="p-6 bg-background dark:bg-background-dark min-h-screen transition-colors">
+
+    <!-- Resúmenes -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <app-resumen titulo="Total disponible" [valor]="totalDisponible"></app-resumen>
+        <app-resumen titulo="Gastos este mes" [valor]="gastosMes"></app-resumen>
+        <app-resumen titulo="Próximo vencimiento" [valor]="proximoVencimiento" tipo="texto"></app-resumen>
+    </div>
+
+    <!-- Tarjetas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+        <app-tarjeta *ngFor="let t of tarjetas" [tarjeta]="t"></app-tarjeta>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="lg:col-span-2 bg-surface dark:bg-surface-dark p-4 rounded-xl shadow-lg transition-colors">
+            <h2 class="text-lg font-bold mb-4 text-text dark:text-text-dark">Gastos Mensuales</h2>
+            <canvas baseChart [data]="datosGastosMensuales" [options]="opcionesGraficoBarra" [type]="'bar'"></canvas>
+        </div>
+
+        <div class="bg-surface dark:bg-surface-dark p-4 rounded-xl shadow-lg transition-colors">
+            <h2 class="text-lg font-bold mb-4 text-text dark:text-text-dark">Distribución por Categoría</h2>
+            <canvas baseChart [data]="datosCategorias" [options]="opcionesGraficoDona" [type]="'doughnut'"></canvas>
+        </div>
+    </div>
+
+    <!-- Últimos Gastos -->
+    <app-tabla-gastos [gastos]="ultimosGastos"></app-tabla-gastos>
+</div>

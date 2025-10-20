@@ -1,29 +1,189 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-50">
-    <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h2 class="text-2xl font-bold text-center mb-6">Crear cuenta</h2>
-        <form>
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
-                <input type="text"
-                    class="w-full border border-gray-300 rounded-lg p-2 focus:ring focus:ring-blue-200" />
-            </div>
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
-                <input type="email"
-                    class="w-full border border-gray-300 rounded-lg p-2 focus:ring focus:ring-blue-200" />
-            </div>
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-                <input type="password"
-                    class="w-full border border-gray-300 rounded-lg p-2 focus:ring focus:ring-blue-200" />
-            </div>
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold">
-                Registrarse
-            </button>
-        </form>
-        <p class="text-sm text-center mt-4">
-            ¿Ya tenés una cuenta?
-            <a routerLink="/auth/login" class="text-blue-600 hover:underline">Iniciar sesión</a>
-        </p>
+<ng-container *ngIf="isMobile; else desktopView">
+    <!-- MOBILE REGISTER -->
+    <div
+        class="relative flex flex-col items-center justify-center min-h-screen bg-background dark:bg-background-dark px-6 py-10 transition-colors">
+        <div class="absolute top-4 right-4">
+            <app-theme-toggle></app-theme-toggle>
+        </div>
+
+        <div
+            class="w-full max-w-sm bg-surface dark:bg-surface-dark text-text dark:text-text-dark rounded-xl shadow-lg p-6 transition-colors">
+            <h1 class="text-2xl font-bold text-center mb-2 text-primary dark:text-primary-dark">
+                Crear Cuenta
+            </h1>
+            <p class="text-center text-text-light dark:text-text-dark/70 mb-6 text-sm">
+                Registrate para controlar tus gastos y tarjetas.
+            </p>
+
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate class="space-y-4">
+                <!-- NOMBRE -->
+                <div>
+                    <label class="block text-sm font-medium text-text dark:text-text-dark mb-1">Nombre</label>
+                    <input type="text" formControlName="nombre" required class="form-input"
+                        [class.error]="registerForm.get('nombre')?.invalid && (registerForm.get('nombre')?.touched || registerForm.get('nombre')?.dirty)" />
+                    <div *ngIf="registerForm.get('nombre')?.invalid && (registerForm.get('nombre')?.touched || registerForm.get('nombre')?.dirty)"
+                        class="form-error">
+                        El nombre es obligatorio.
+                    </div>
+                </div>
+
+                <!-- EMAIL -->
+                <div>
+                    <label class="block text-sm font-medium text-text dark:text-text-dark mb-1">Email</label>
+                    <input type="email" formControlName="email" required class="form-input"
+                        [class.error]="registerForm.get('email')?.invalid && (registerForm.get('email')?.touched || registerForm.get('email')?.dirty)" />
+                    <div *ngIf="registerForm.get('email')?.invalid && (registerForm.get('email')?.touched || registerForm.get('email')?.dirty)"
+                        class="form-error">
+                        <ng-container *ngIf="registerForm.get('email')?.errors?.['required']">El email es
+                            obligatorio.</ng-container>
+                        <ng-container *ngIf="registerForm.get('email')?.errors?.['email']">Ingresá un formato
+                            válido.</ng-container>
+                    </div>
+                </div>
+
+                <!-- PASSWORD -->
+                <div>
+                    <label class="block text-sm font-medium text-text dark:text-text-dark mb-1">Contraseña</label>
+                    <input type="password" formControlName="password" required class="form-input"
+                        [class.error]="registerForm.get('password')?.invalid && (registerForm.get('password')?.touched || registerForm.get('password')?.dirty)" />
+                    <div *ngIf="registerForm.get('password')?.invalid && (registerForm.get('password')?.touched || registerForm.get('password')?.dirty)"
+                        class="form-error">
+                        <ng-container *ngIf="registerForm.get('password')?.errors?.['required']">
+                            La contraseña es obligatoria.
+                        </ng-container>
+                        <ng-container *ngIf="registerForm.get('password')?.errors?.['pattern']">
+                            Debe tener mayúscula, minúscula, número y carácter especial.
+                        </ng-container>
+                    </div>
+                </div>
+
+                <!-- CONFIRM PASSWORD -->
+                <div>
+                    <label class="block text-sm font-medium text-text dark:text-text-dark mb-1">Confirmar
+                        Contraseña</label>
+                    <input type="password" formControlName="confirmPassword" required class="form-input"
+                        [class.error]="registerForm.get('confirmPassword')?.invalid && (registerForm.get('confirmPassword')?.touched || registerForm.get('confirmPassword')?.dirty)" />
+                    <div *ngIf="registerForm.get('confirmPassword')?.errors?.['passwordMismatch']" class="form-error">
+                        Las contraseñas no coinciden.
+                    </div>
+                </div>
+
+                <!-- BOTÓN -->
+                <button type="submit" [disabled]="registerForm.invalid"
+                    class="w-full bg-primary hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-2 rounded-lg transition-colors">
+                    Registrarme
+                </button>
+
+                <div class="text-center text-sm text-text-light dark:text-text-dark/70 mt-4">
+                    ¿Ya tenés cuenta?
+                    <a routerLink="/auth/login"
+                        class="text-primary-light hover:text-primary-dark font-semibold hover:underline transition-colors">
+                        Iniciar sesión
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+</ng-container>
+
+<!-- DESKTOP REGISTER -->
+<ng-template #desktopView>
+    <div class="min-h-screen flex transition-colors bg-background dark:bg-background-dark">
+        <!-- Columna izquierda con imagen -->
+        <div class="hidden md:flex w-1/2 relative overflow-hidden">
+            <img src="assets/images/login-bg.jpg" alt="Fondo financiero"
+                class="absolute inset-0 w-full h-full object-cover z-0" />
+
+            <div
+                class="absolute inset-0 bg-gradient-to-br from-[#003973cc] to-[#66b3ffb3] dark:from-[#1B2631cc] dark:to-[#003973b3] transition-colors z-10">
+            </div>
+
+            <div class="absolute inset-0 flex flex-col justify-center items-center text-center text-white p-12 z-20">
+                <h1 class="text-4xl font-bold mb-4">Comenzá a Organizarte</h1>
+                <p class="text-lg text-blue-50 max-w-md">
+                    Registrate para llevar un control detallado de tus gastos y tarjetas.
+                </p>
+            </div>
+        </div>
+
+        <!-- Columna derecha -->
+        <div
+            class="relative flex w-full md:w-1/2 justify-center items-center bg-background dark:bg-background-dark p-8">
+            <div class="absolute top-6 right-6">
+                <app-theme-toggle></app-theme-toggle>
+            </div>
+
+            <!-- Reutilizamos el mismo formulario que en mobile -->
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()"
+                class="bg-surface dark:bg-surface-dark text-text dark:text-text-dark shadow-xl rounded-xl p-8 w-full max-w-md space-y-5 transition-colors"
+                novalidate>
+
+                <h2 class="text-2xl font-bold text-center text-text dark:text-text-dark mb-2">
+                    Crear cuenta
+                </h2>
+
+                <!-- Copia idéntica de los campos -->
+                <div>
+                    <label class="block text-sm font-medium text-text dark:text-text-dark mb-1">Nombre</label>
+                    <input type="text" formControlName="nombre" required class="form-input"
+                        [class.error]="registerForm.get('nombre')?.invalid && (registerForm.get('nombre')?.touched || registerForm.get('nombre')?.dirty)" />
+                    <div *ngIf="registerForm.get('nombre')?.invalid && (registerForm.get('nombre')?.touched || registerForm.get('nombre')?.dirty)"
+                        class="form-error">
+                        El nombre es obligatorio.
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-text dark:text-text-dark mb-1">Email</label>
+                    <input type="email" formControlName="email" required class="form-input"
+                        [class.error]="registerForm.get('email')?.invalid && (registerForm.get('email')?.touched || registerForm.get('email')?.dirty)" />
+                    <div *ngIf="registerForm.get('email')?.invalid && (registerForm.get('email')?.touched || registerForm.get('email')?.dirty)"
+                        class="form-error">
+                        <ng-container *ngIf="registerForm.get('email')?.errors?.['required']">El email es
+                            obligatorio.</ng-container>
+                        <ng-container *ngIf="registerForm.get('email')?.errors?.['email']">Ingresá un formato
+                            válido.</ng-container>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-text dark:text-text-dark mb-1">Contraseña</label>
+                    <input type="password" formControlName="password" required class="form-input"
+                        [class.error]="registerForm.get('password')?.invalid && (registerForm.get('password')?.touched || registerForm.get('password')?.dirty)" />
+                    <div *ngIf="registerForm.get('password')?.invalid && (registerForm.get('password')?.touched || registerForm.get('password')?.dirty)"
+                        class="form-error">
+                        <ng-container *ngIf="registerForm.get('password')?.errors?.['required']">
+                            La contraseña es obligatoria.
+                        </ng-container>
+                        <ng-container *ngIf="registerForm.get('password')?.errors?.['pattern']">
+                            Debe tener mayúscula, minúscula, número y carácter especial.
+                        </ng-container>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-text dark:text-text-dark mb-1">Confirmar
+                        Contraseña</label>
+                    <input type="password" formControlName="confirmPassword" required class="form-input"
+                        [class.error]="registerForm.get('confirmPassword')?.invalid && (registerForm.get('confirmPassword')?.touched || registerForm.get('confirmPassword')?.dirty)" />
+                    <div *ngIf="registerForm.get('confirmPassword')?.errors?.['passwordMismatch']" class="form-error">
+                        Las contraseñas no coinciden.
+                    </div>
+                </div>
+
+                <button type="submit" [disabled]="registerForm.invalid"
+                    class="w-full bg-primary hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-2 rounded-lg transition-colors">
+                    Registrarme
+                </button>
+
+                <div class="text-center text-sm text-text-light dark:text-text-dark/70 mt-4">
+                    ¿Ya tenés cuenta?
+                    <a routerLink="/auth/login"
+                        class="text-primary-light hover:text-primary-dark font-semibold hover:underline transition-colors">
+                        Iniciar sesión
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

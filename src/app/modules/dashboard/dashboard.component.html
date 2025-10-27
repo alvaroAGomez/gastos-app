@@ -4,7 +4,8 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <app-resumen titulo="Total disponible" [valor]="totalDisponible"></app-resumen>
         <app-resumen titulo="Gastos este mes" [valor]="gastosMes"></app-resumen>
-        <app-resumen titulo="Próximo vencimiento" [valor]="proximoVencimiento" tipo="texto"></app-resumen>
+        <app-resumen titulo="Próximo Cierre - {{tarjetaCierre}}" [valor]="proximoVencimiento"
+            tipo="texto"></app-resumen>
     </div>
 
     <!-- Tarjetas -->
@@ -26,5 +27,5 @@
     </div>
 
     <!-- Últimos Gastos -->
-    <app-tabla-gastos [gastos]="ultimosGastos"></app-tabla-gastos>
+    <app-tabla-gastos [ultimosGastos]="ultimosGastos"></app-tabla-gastos>
 </div>

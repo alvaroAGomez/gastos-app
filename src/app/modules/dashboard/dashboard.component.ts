@@ -1,26 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { ThemeService } from '../../core/services/theme.service';
-
-// src/app/modules/dashboard/models.ts
-export interface TarjetaDashboard {
-  banco: string;
-  nombre: string;
-  logoUrl: string;
-  tipo: 'Crédito' | 'Débito';
-  limiteDisponible: number;
-  limiteTotal: number;
-  cierre: number;
-  vencimiento: number;
-}
-
-export interface GastoItem {
-  fecha: string;
-  descripcion: string;
-  categoria: string;
-  monto: number;
-  tarjeta: string;
-}
+import { DashboardService } from './services/dashboard.service';
+import { DashboardGastosRequest } from './models/dashboard-gastos.request';
+import {
+  ApiResponse,
+  GastoCompletoDto,
+  GastosCompletosResponseDto,
+} from './models/responses/ultimos-gastos.response';
+import {
+  TarjetaCreditoResponse,
+  TarjetaCreditoResumenResponse,
+} from './models/responses/tarjeta-credito.response';
+import { ResumenFinancieroResponse } from './models/responses/resumen-financiero.response';
 
 @Component({
   selector: 'app-dashboard',
@@ -32,78 +24,10 @@ export class DashboardComponent implements OnInit {
   totalDisponible = 0;
   gastosMes = 0;
   proximoVencimiento: string | number = '-';
+  tarjetaCierre: string | number = '-';
   isDarkMode = false;
-
-  tarjetas: TarjetaDashboard[] = [
-    {
-      banco: 'Banco Nación',
-      nombre: 'Visa Platinum',
-      logoUrl: 'assets/images/visa-logo.png',
-      tipo: 'Crédito',
-      limiteDisponible: 6420,
-      limiteTotal: 10000,
-      cierre: 5,
-      vencimiento: 20,
-    },
-    {
-      banco: 'Banco Provincia',
-      nombre: 'Mastercard Gold',
-      logoUrl: 'assets/images/mastercard-logo.png',
-      tipo: 'Crédito',
-      limiteDisponible: 5750,
-      limiteTotal: 15000,
-      cierre: 10,
-      vencimiento: 25,
-    },
-    {
-      banco: 'Banco Ciudad',
-      nombre: 'Visa Débito',
-      logoUrl: 'assets/images/visa-logo.png',
-      tipo: 'Débito',
-      limiteDisponible: 3800,
-      limiteTotal: 5000,
-      cierre: 1,
-      vencimiento: 15,
-    },
-  ];
-
-  ultimosGastos: GastoItem[] = [
-    {
-      fecha: '1/9/2026',
-      descripcion: 'tablet (18/18)',
-      categoria: 'Salud',
-      monto: 32555556,
-      tarjeta: 'Galicia - Visa',
-    },
-    {
-      fecha: '1/8/2026',
-      descripcion: 'tablet (17/18)',
-      categoria: 'Salud',
-      monto: 32555556,
-      tarjeta: 'Galicia - Visa',
-    },
-    {
-      fecha: '18/7/2026',
-      descripcion: 'test 2 (12/12)',
-      categoria: 'Compras',
-      monto: 4166667,
-      tarjeta: 'Galicia - Visa',
-    },
-    {
-      fecha: '1/7/2026',
-      descripcion: 'tablet (16/18)',
-      categoria: 'Salud',
-      monto: 32555556,
-      tarjeta: 'Galicia - Visa',
-    },
-    {
-      fecha: '21/6/2026',
-      descripcion: 'tele (18/18)',
-      categoria: 'Compras',
-      monto: 88888889,
-      tarjeta: 'Galicia - Visa Black',
-    },
-  ];
+  public ultimosGastos: GastoCompletoDto[] = [];
+  public tarjetas: TarjetaCreditoResumenResponse[] = [];
 
   // 📊 Gráfico de barras
   datosGastosMensuales: ChartData<'bar', number[], string> = {
@@ -184,13 +108,49 @@ export class DashboardComponent implements OnInit {
     },
   };
 
-  constructor(private theme: ThemeService) {}
+  constructor(
+    private theme: ThemeService,
+    private dashboardService: DashboardService
+  ) {}
 
   ngOnInit(): void {
     this.theme.darkMode$.subscribe((dark) => {
       this.isDarkMode = dark;
       this.actualizarTemaGraficos();
     });
+    this.cargarUltimosGastos();
+    this.getResumenTarjetas();
+    this.getResumenFinanciero();
+  }
+
+  public cargarUltimosGastos() {
+    const request: DashboardGastosRequest = { limit: 5 };
+    this.dashboardService
+      .getUltimosGastos(request)
+      .subscribe((response: ApiResponse<GastosCompletosResponseDto>) => {
+        console.log(response);
+        this.ultimosGastos = response?.data?.gastos ?? [];
+      });
+  }
+
+  public getResumenTarjetas() {
+    this.dashboardService.getResumenTarjetas().subscribe((response) => {
+      console.log(response.data);
+      this.tarjetas = response?.data ?? [];
+    });
+  }
+
+  public getResumenFinanciero() {
+    this.dashboardService
+      .getResumenFinanciero()
+      .subscribe((response: ApiResponse<ResumenFinancieroResponse>) => {
+        console.log(response.data);
+        const resumen = response?.data;
+        this.totalDisponible = resumen?.totalDisponible ?? 0;
+        this.gastosMes = resumen?.gastosEsteMes ?? 0;
+        this.proximoVencimiento = resumen?.proximoCierre?.fecha ?? '-';
+        this.tarjetaCierre = resumen?.proximoCierre?.nombreTarjeta ?? '-';
+      });
   }
 
   actualizarTemaGraficos() {

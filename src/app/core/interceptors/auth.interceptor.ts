@@ -32,13 +32,11 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(cloned).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Manejo global de errores 401 o 403
         if (error.status === 401 || error.status === 403) {
           localStorage.removeItem('token');
           this.router.navigate(['/auth/login']);
         }
 
-        // Podés agregar otros manejos (500, 404, etc.)
         return throwError(() => error);
       })
     );

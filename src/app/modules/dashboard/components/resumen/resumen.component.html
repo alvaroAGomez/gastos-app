@@ -7,7 +7,7 @@
        'text-text dark:text-text-dark': !(titulo.toLowerCase().includes('total') || titulo.toLowerCase().includes('gastos'))
      }">
         <ng-container *ngIf="tipo === 'moneda' && esNumero(valor); else textoPlano">
-            {{ valor | currency:'ARS':'symbol':'1.0-0' }}
+            {{ valor | currency:'$':'symbol':'1.0-0' }}
         </ng-container>
         <ng-template #textoPlano>
             {{ valor }}

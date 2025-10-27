@@ -1,18 +1,25 @@
-// src/core/interceptors/spinner.interceptor.ts
 import {
-  HttpInterceptorFn,
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
   HttpRequest,
-  HttpHandlerFn,
 } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { SpinnerService } from '../../shared/services/spinner.service';
-import { finalize } from 'rxjs';
 
-export const spinnerInterceptor: HttpInterceptorFn = (
-  req: HttpRequest<unknown>,
-  next: HttpHandlerFn
-) => {
-  const spinner = inject(SpinnerService);
-  spinner.show();
-  return next(req).pipe(finalize(() => spinner.hide()));
-};
+@Injectable()
+export class SpinnerInterceptor implements HttpInterceptor {
+  constructor(private spinnerService: SpinnerService) {}
+
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+    this.spinnerService.show();
+
+    return next.handle(req).pipe(finalize(() => this.spinnerService.hide()));
+  }
+}

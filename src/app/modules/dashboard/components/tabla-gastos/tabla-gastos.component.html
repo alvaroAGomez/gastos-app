@@ -6,7 +6,8 @@
             <thead class="bg-gray-100 dark:bg-gray-800 text-xs uppercase font-semibold">
                 <tr>
                     <th class="px-4 py-3">Fecha</th>
-                    <th class="px-4 py-3">Descripción</th>
+                    <th class="px-4 py-3">Gasto</th>
+                    <th class="px-4 py-3 text-center">Cant. Cuotas</th> <!-- ✅ text-center en header -->
                     <th class="px-4 py-3">Categoría</th>
                     <th class="px-4 py-3">Monto</th>
                     <th class="px-4 py-3">Tarjeta</th>
@@ -14,22 +15,64 @@
             </thead>
 
             <tbody>
-                <tr *ngFor="let g of gastos" class="border-b border-gray-200 dark:border-gray-700">
-                    <td class="px-4 py-2 whitespace-nowrap">{{ g.fecha }}</td>
-                    <td class="px-4 py-2">{{ g.descripcion }}</td>
+                <tr *ngFor="let gasto of ultimosGastos"
+                    class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                    <!-- Fecha -->
+                    <td class="px-4 py-2 whitespace-nowrap">
+                        {{ gasto.fecha | date:'dd/MM/yyyy' }}
+                    </td>
+
+                    <!-- Gasto (Descripción) -->
                     <td class="px-4 py-2">
-                        <span class="px-2 py-1 rounded-full text-xs" [ngClass]="{
-                    'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-200': g.categoria === 'Compras',
-                    'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200': g.categoria === 'Salud',
-                    'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200': g.categoria === 'Servicios',
-                    'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200': g.categoria === 'Comida',
-                    'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200': g.categoria === 'Entretenimiento'
-                  }">
-                            {{ g.categoria }}
+                        {{ gasto.descripcion }}
+                    </td>
+
+                    <!-- Cantidad de Cuotas -->
+                    <td class="px-4 py-2 text-center">
+                        <span
+                            class="px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200 rounded-full text-xs">
+                            {{ gasto.totalCuotas }}
                         </span>
                     </td>
-                    <td class="px-4 py-2 whitespace-nowrap">{{ g.monto | currency:'ARS' }}</td>
-                    <td class="px-4 py-2">{{ g.tarjeta }}</td>
+
+                    <!-- Categoría -->
+                    <td class="px-4 py-2">
+                        <span class="px-2 py-1 rounded-full text-xs inline-flex items-center gap-1"
+                            [style.background-color]="gasto.categoria.color_hex + '20'"
+                            [style.color]="gasto.categoria.color_hex">
+                            <i *ngIf="gasto.categoria.icono" [class]="gasto.categoria.icono"></i>
+                            {{ gasto.categoria.nombre }}
+                        </span>
+                    </td>
+
+                    <!-- Monto -->
+                    <td class="px-4 py-2 whitespace-nowrap font-medium">
+                        <div class="flex flex-col">
+                            <span class="text-text dark:text-text-dark">
+                                {{ gasto.monto | currency:'$':'symbol':'1.2-2' }}
+                            </span>
+                            <span *ngIf="gasto.montoTotal && gasto.montoTotal !== gasto.monto"
+                                class="text-xs text-gray-500 dark:text-gray-400">
+                                Total: {{ gasto.montoTotal | currency:'$':'symbol':'1.2-2' }}
+                            </span>
+                        </div>
+                    </td>
+
+                    <!-- Tarjeta -->
+                    <td class="px-4 py-2">
+                        <div class="flex flex-col">
+                            <span class="font-medium">{{ gasto.tarjeta.nombre }}</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ gasto.tarjeta.banco.nombre
+                                }}</span>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Estado vacío -->
+                <tr *ngIf="ultimosGastos.length === 0">
+                    <td colspan="6" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                        No hay gastos para mostrar
+                    </td>
                 </tr>
             </tbody>
         </table>

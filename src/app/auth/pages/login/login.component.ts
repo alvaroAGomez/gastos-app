@@ -47,14 +47,21 @@ export class LoginComponent implements OnInit {
           password: this.loginForm.value.password!,
         })
         .subscribe({
-          next: (res) => {
-            localStorage.setItem('token', res.access_token);
+          next: (res: any) => {
+            if (!res.ok) {
+              this.toast.error(
+                res?.error?.message ||
+                  'Error al iniciar sesión. Verifica tus credenciales'
+              );
+              return;
+            }
+            localStorage.setItem('token', res.data.access_token);
             this.router.navigate(['/']);
           },
           error: (err) => {
             this.toast.error(
               err?.error?.message ||
-                'Error al iniciar sesión. Verifica tus credenciales.'
+                'Error al iniciar sesión. Verifica tus credenciales GIL.'
             );
           },
         });
